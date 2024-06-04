@@ -1,0 +1,6 @@
+email{marketing@ihsand.com}
+phone{+359 82 611 031}
+client_name{Интерхотел САНДАНСКИ}
+color{#9f3029}
+menu_order{index.txt,food.txt,spa.txt}
+high_season{summer}

@@ -1,0 +1,6 @@
+email{hotelhissar@gmail.com}
+phone{+359(0) 337 62 781;}
+client_name{Хотел Хисар}
+color{#ed7d27}
+menu_order{index.txt,relax.txt}
+high_season{summer}

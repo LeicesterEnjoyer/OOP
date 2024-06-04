@@ -1,0 +1,5 @@
+Peter Green, 40, MALE
+A: 75.5102 (normal)
+B: 0.1310 (normal)
+C: 84.2667 (normal)
+D: 13.3000 (lower than normal)

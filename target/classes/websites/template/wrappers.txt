@@ -1,0 +1,8 @@
+par{<p>%s</p>}
+high_season{<span style="color:#9f3029">%s</span>}
+not_high_season{<span style="color:#19406c">%s</span>}
+menu_item_start{<li class="nav-item "><a class="nav-link" href="%s">}
+menu_item_end{%s</a></li>}
+table_row{<tr>%s</tr>}
+table_cell{<td>%s</td>}
+table{<table>%s</table>}

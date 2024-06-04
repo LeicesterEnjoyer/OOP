@@ -1,0 +1,6 @@
+Dear Ted Brown
+We are sending you the results of Ted Brown as requested:
+A: 79.5918 (normal)
+B: 0.1510 (normal)
+C: 86.9333 (normal)
+D: 15.3000 (lower than normal)

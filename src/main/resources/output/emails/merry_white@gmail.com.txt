@@ -1,0 +1,6 @@
+Dear Merry White
+We are sending you the results of Merry White as requested:
+A: 77.5510 (normal)
+B: 0.1410 (normal)
+C: 85.6000 (normal)
+D: 14.3000 (lower than normal)

@@ -1,0 +1,6 @@
+type,process_method
+A,PERCENT
+B,NORMALIZE
+C,PERCENT
+D,NONE
+UNKNOWN,NONE

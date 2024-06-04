@@ -1,0 +1,6 @@
+Dear Pete Black
+We are sending you the results of Peter Green as requested:
+A: 75.5102 (normal)
+B: 0.1310 (normal)
+C: 84.2667 (normal)
+D: 13.3000 (lower than normal)

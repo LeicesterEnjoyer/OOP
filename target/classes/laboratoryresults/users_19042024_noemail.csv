@@ -1,0 +1,8 @@
+firstName,lastName,age,gender,code
+Peter,GREEN,40,MALE,1
+MERRY  ,white , ,FEMALE,2
+Ted ,  Brown, -10, MALE, 3
+PeteR ,GReeN,41,,4
+merry,white ,,MALE,5
+Ted ,  BROWN, 11, FEMALE, 6
+,,,,8

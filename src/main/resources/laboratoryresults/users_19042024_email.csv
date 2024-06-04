@@ -1,0 +1,8 @@
+firstName,lastName,age,gender,code,email,contactFirstName,contactLastName
+Peter,GREEN,40,MALE,1,jerry_black@gmail.com, Pete, Black
+MERRY  ,white ,20 ,FEMALE,2,merry_white@gmail.com, Merry,   White
+Ted ,  Brown, 10, MALE, 3,ted_broWN@gmail.com, Ted, Brown
+PeteR ,GReeN,41,,4,jerry_BLACK@gmail.com  , Pete, Black
+merry,white ,,MALE,5,, Jerry, Black
+Ted ,  BROWN, 11, FEMALE, 6,ted_broWN@gmail.com, Ted, Brown
+,,,,8,austin@gmail.com, Austin, MARTIN

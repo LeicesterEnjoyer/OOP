@@ -1,0 +1,6 @@
+email{rila@rilaborovets.com}
+phone{+359 750 900 05}
+client_name{Хотел Рила}
+color{#6bb7be}
+menu_order{index.txt,spa.txt,sport.txt}
+high_season{winter}
