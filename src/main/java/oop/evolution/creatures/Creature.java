@@ -72,7 +72,7 @@ public abstract sealed class Creature permits Plant {
         creatureCharacteristics.putAll(PROPERTIES);
         creatureCharacteristics.putAll(parent.creatureCharacteristics);
         
-        if (parent instanceof Plant && position.get().addPlant(this))
+        if (parent instanceof Plant && parent.position.get().addPlant(this))
             startLiving();
     }
 
@@ -124,7 +124,6 @@ public abstract sealed class Creature permits Plant {
                     break;
                 }
         });
-        growThread.setPriority(Thread.MIN_PRIORITY);
         growThread.start();
 
         evolveThread = new Thread(() -> {
@@ -137,7 +136,6 @@ public abstract sealed class Creature permits Plant {
                     break;
                 }
         });
-        evolveThread.setPriority(Thread.MIN_PRIORITY);
         evolveThread.start();
 
         replicateThread = new Thread(() -> {
@@ -150,7 +148,6 @@ public abstract sealed class Creature permits Plant {
                     break;
                 }
         });
-        replicateThread.setPriority(Thread.MIN_PRIORITY);
         replicateThread.start();
 
         feedThread = new Thread(() -> {
@@ -163,7 +160,6 @@ public abstract sealed class Creature permits Plant {
                     break;
                 }
         });
-        feedThread.setPriority(Thread.NORM_PRIORITY);
         feedThread.start();
     }
 

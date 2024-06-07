@@ -1,6 +1,5 @@
 package oop.evolution.creatures;
 
-import java.util.HashMap;
 import java.util.Random;
 
 import oop.evolution.Customizable;
@@ -12,10 +11,9 @@ import oop.evolution.World;
  * The plant grows, evolves, replicates, and feeds according to defined properties.
  */
 public final class Plant extends Creature {
-    /**
-     * The properties loaded from the properties file.
-     */
-    private static final HashMap<String, Integer> PROPERTIES = Customizable.loadProperties("src/main/resources/creatures/plants.properties");
+    static {    
+        PROPERTIES.putAll(Customizable.loadProperties("src/main/resources/creatures/plants.properties"));
+    }
 
     /**
      * Random number generator for evolution purposes.
@@ -80,7 +78,7 @@ public final class Plant extends Creature {
     protected synchronized void feed() {
         WorldCell currentCell = position.get();
         
-        if (isDay() && currentCell.getWaterLevel() > 0) {
+        if (currentCell != null && isDay() && currentCell.getWaterLevel() > 0) {
             int energyIncrease = PROPERTIES.get("ENERGY_INCREASE");
             
             creatureCharacteristics.put("ENERGY", creatureCharacteristics.get("ENERGY") + energyIncrease);
@@ -96,7 +94,8 @@ public final class Plant extends Creature {
      */
     private boolean canReplicate() {
         WorldCell currentCell = position.get();
-        return currentCell.addPlant(this);
+        
+        return currentCell != null && currentCell.addPlant(this);
     }
 
     /**
