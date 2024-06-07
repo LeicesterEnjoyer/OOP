@@ -14,10 +14,13 @@ public class CreatureFactory {
     public static Creature createCreature(CreaturesTypes type) {
         switch (type) {
             case DIURNAL_HERBIVOROUS:
+                return new DiurnalHerbivorous();
             case DIURNAL_PREDATOR:
+                return new DiurnalPredator();
             case NOCTURNAL_PREDATOR:
+                return new NocturnalPredator();
             case NOCTURNAL_HERBIVOROUS:
-                return new Plant();
+                return new NocturnalHerbivorous();
             default:
                 throw new IllegalArgumentException("Unsupported creature type: " + type);
         }

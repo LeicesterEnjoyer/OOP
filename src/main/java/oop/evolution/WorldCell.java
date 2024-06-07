@@ -34,6 +34,11 @@ public class WorldCell {
     private final List<Creature> plants = Collections.synchronizedList(new LinkedList<>());
 
     /**
+     * A thread-safe list to store animals in the cell.
+     */
+    private final List<Creature> animals = Collections.synchronizedList(new LinkedList<>());
+
+    /**
      * Constructor that initializes the water level with the value from the properties file.
      */
     public WorldCell() {
@@ -56,6 +61,21 @@ public class WorldCell {
         return true;
     }
 
+    /**
+     * Adds an animal to the cell.
+     *
+     * @param animal    The animal to add.
+     * @return          True if the animal was added, false otherwise.
+     */
+    public synchronized boolean addAnimal(Creature animal) {
+        if (animals.size() >= PROPERTIES.get("CELL_ANIMALS"))
+            return false;
+
+        animals.add(animal);
+        animal.setPosition(this);
+        
+        return true;
+    }
 
     /**
      * Retrieves information about the types and stages of creatures present in the world cell.

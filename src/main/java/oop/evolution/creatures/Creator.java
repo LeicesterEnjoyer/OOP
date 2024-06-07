@@ -37,16 +37,62 @@ public class Creator implements Customizable, Runnable {
         Random random = new Random();
 
         while (true) {
-            if (world.getPlantNumber().get() < World.getProperty("MAX_PLANTS")) {
-                int x = random.nextInt(World.getProperty("BOARD_SIZE"));
-                int y = random.nextInt(World.getProperty("BOARD_SIZE"));
-
-                Plant newPlant = new Plant();
-                world.addPlant(newPlant, x, y);
-            }
-
             try {
-                Thread.sleep(PROPERTIES.get("CREATION_PERIOD"));
+                int plantCount = PROPERTIES.get("PLANT");
+                for (int i = 0; i < plantCount; i++) {
+                    if (world.getPlantNumber().get() < World.getProperty("MAX_PLANTS")) {
+                        int x = random.nextInt(World.getProperty("BOARD_SIZE"));
+                        int y = random.nextInt(World.getProperty("BOARD_SIZE"));
+
+                        Plant newPlant = new Plant();
+                        world.addPlant(newPlant, x, y);
+                        Thread.sleep(PROPERTIES.get("CREATION_PERIOD"));
+                    }
+                }
+
+                int dayHerbCount = PROPERTIES.get("DAY_HERB");
+                for (int i = 0; i < dayHerbCount; i++) {
+                    if (world.addWorldAnimal(new DiurnalHerbivorous())) {
+                        int x = random.nextInt(World.getProperty("BOARD_SIZE"));
+                        int y = random.nextInt(World.getProperty("BOARD_SIZE"));
+
+                        world.addAnimal(new DiurnalHerbivorous(), x, y);
+                        Thread.sleep(PROPERTIES.get("CREATION_PERIOD"));
+                    }
+                }
+
+                int nightHerbCount = PROPERTIES.get("NIGHT_HERB");
+                for (int i = 0; i < nightHerbCount; i++) {
+                    if (world.addWorldAnimal(new NocturnalHerbivorous())) {
+                        int x = random.nextInt(World.getProperty("BOARD_SIZE"));
+                        int y = random.nextInt(World.getProperty("BOARD_SIZE"));
+
+                        world.addAnimal(new NocturnalHerbivorous(), x, y);
+                        Thread.sleep(PROPERTIES.get("CREATION_PERIOD"));
+                    }
+                }
+
+                int dayPredCount = PROPERTIES.get("DAY_PRED");
+                for (int i = 0; i < dayPredCount; i++) {
+                    if (world.addWorldAnimal(new DiurnalPredator())) {
+                        int x = random.nextInt(World.getProperty("BOARD_SIZE"));
+                        int y = random.nextInt(World.getProperty("BOARD_SIZE"));
+
+                        world.addAnimal(new DiurnalPredator(), x, y);
+                        Thread.sleep(PROPERTIES.get("CREATION_PERIOD"));
+                    }
+                }
+
+                int nightPredCount = PROPERTIES.get("NIGHT_PRED");
+                for (int i = 0; i < nightPredCount; i++) {
+                    if (world.addWorldAnimal(new NocturnalPredator())) {
+                        int x = random.nextInt(World.getProperty("BOARD_SIZE"));
+                        int y = random.nextInt(World.getProperty("BOARD_SIZE"));
+
+                        world.addAnimal(new NocturnalPredator(), x, y);
+                        Thread.sleep(PROPERTIES.get("CREATION_PERIOD"));
+                    }
+                }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;

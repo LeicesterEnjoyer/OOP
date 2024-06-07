@@ -11,7 +11,7 @@ import oop.evolution.WorldCell;
  * The abstract base class for all creatures in the evolution simulation.
  * This class defines common behavior and attributes for creatures.
  */
-public abstract sealed class Creature permits Plant {
+public abstract sealed class Creature permits Plant, Animal {
     /**
      * The properties shared by all creature instances.
      */

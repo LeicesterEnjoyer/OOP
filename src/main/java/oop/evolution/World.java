@@ -1,9 +1,13 @@
 package oop.evolution;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import oop.evolution.creatures.Animal;
 import oop.evolution.creatures.Creator;
 import oop.evolution.creatures.Creature;
 import oop.evolution.draw.DrawWorld;
@@ -45,7 +49,15 @@ public class World {
      * The number of plants in the world.
      */
     private AtomicInteger plantNumber = new AtomicInteger(0);
+    /**
+     * The number of animals in the world.
+     */
+    private final AtomicInteger creatureNumber = new AtomicInteger(0);
 
+    /**
+     * The list of all animals that in the world.
+     */
+    private final List<Creature> animals = Collections.synchronizedList(new LinkedList<>());
 
     /**
      * The size of the board, as specified by the properties.
@@ -134,6 +146,39 @@ public class World {
     public void rainOnCell(int x, int y, int waterQuantity) {
         validateCoordinates(x, y);
         board[x][y].rain(waterQuantity);
+    }
+
+    /**
+     * Adds a new animal to the world.
+     *
+     * @param newAnimal The animal to add.
+     * @return          True if the animal was successfully added, false if the maximum number of animals in the world has been reached.
+     */
+    public synchronized boolean addWorldAnimal(Animal newAnimal) {
+        if (animals.size() >= getProperty("MAX_ANIMALS"))
+            return false;
+        else {
+            animals.add(newAnimal);
+            creatureNumber.incrementAndGet();
+            return true;
+        }
+    }
+
+    /**
+     * Adds an animal to a specific cell on the board.
+     *
+     * @param animal    The animal to add.
+     * @param x         The x-coordinate of the cell.
+     * @param y         The y-coordinate of the cell.
+     * @return          True if the animal was successfully added to the cell, false if the cell is full.
+     */
+    public boolean addAnimal(Creature animal, int x, int y) {
+        if (board[x][y].addAnimal(animal)) {
+            animal.setPosition(board[x][y]);
+            return true;
+        }
+
+        return false;
     }
 
     /**
