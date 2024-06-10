@@ -1,5 +1,6 @@
 package oop.evolution;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -10,6 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import oop.evolution.creatures.Animal;
 import oop.evolution.creatures.Creator;
 import oop.evolution.creatures.Creature;
+import oop.evolution.creatures.Plant;
 import oop.evolution.draw.DrawWorld;
 import oop.evolution.environment.DayAndNight;
 import oop.evolution.environment.Weather;
@@ -71,7 +73,7 @@ public class World {
     {
         for (int i = 0; i < BOARD_SIZE; ++i)
             for (int j = 0; j < BOARD_SIZE; ++j)
-                board[i][j] = new WorldCell();
+                board[i][j] = new WorldCell(i, j);
     }
 
     /**
@@ -95,6 +97,46 @@ public class World {
         
         drawWorld = new DrawWorld();
         drawWorld.show();
+    }
+
+    /**
+     * Moves a creature to a neighboring cell if there is room for it.
+     * 
+     * @param creature The creature to move.
+     * @return True if the creature was moved to a neighboring cell, otherwise false.
+     */
+    public synchronized boolean moveToNeighbourCell(Creature creature) {
+        int x = creature.getPosition().getX();
+        int y = creature.getPosition().getY();
+        List<int[]> neighbors = getNeighboringCells(x, y);
+
+        for (int[] neighbor : neighbors) {
+            int nx = neighbor[0];
+            int ny = neighbor[1];
+
+            if (board[nx][ny].addAnimal(creature)) {
+                creature.getPosition().removeCreature(creature);
+                creature.setPosition(board[nx][ny]);
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<int[]> getNeighboringCells(int x, int y) {
+        List<int[]> neighbors = new ArrayList<>();
+        int[] dx = {-1, 0, 1, 0};
+        int[] dy = {0, -1, 0, 1};
+
+        for (int i = 0; i < 4; i++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (nx >= 0 && nx < BOARD_SIZE && ny >= 0 && ny < BOARD_SIZE) 
+                neighbors.add(new int[]{nx, ny});
+        }
+        return neighbors;
     }
 
     /**
@@ -179,6 +221,15 @@ public class World {
         }
 
         return false;
+    }
+
+    public void removeCreature(Creature creature) {
+        if (creature instanceof Animal)
+            animals.remove(creature);
+        else if (creature instanceof Plant) 
+            plantNumber.decrementAndGet();
+               
+        creatureNumber.decrementAndGet();
     }
 
     /**

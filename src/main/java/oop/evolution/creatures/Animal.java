@@ -1,10 +1,28 @@
 package oop.evolution.creatures;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import oop.evolution.World;
+
 /**
  * The Animal class represents an animal in the evolution simulation.
  * It extends the Creature class and implements the behavior specific to animals.
  */
 public non-sealed class Animal extends Creature {
+    /**
+     * The evolution characteristics for animals.
+     */
+    protected static final ArrayList<String> EVOLUTION_CHARACTERISTICS = new ArrayList<>();
+
+    static {
+        EVOLUTION_CHARACTERISTICS.add("GROW_WITH");
+        EVOLUTION_CHARACTERISTICS.add("INACTIVE_GROW_WITH");
+        EVOLUTION_CHARACTERISTICS.add("ENERGY_INCREASE");
+        EVOLUTION_CHARACTERISTICS.add("DEFENCE");
+        EVOLUTION_CHARACTERISTICS.add("ATTACK");
+    }
+
     /**
      * Constructs a new Animal with default properties.
      */
@@ -55,12 +73,61 @@ public non-sealed class Animal extends Creature {
         return PROPERTIES.get("GROW_WITH");
     }
 
+    /**
+     * Attempts to move the animal to an adjacent cell up to 10 times in 1 second.
+     * Terminates execution if unsuccessful.
+     */
+    protected synchronized void move() {
+        for (int attempts = 0; attempts < 10; attempts++) {
+            if (World.getInstance().moveToNeighbourCell(this))
+                return;
+
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+        }
+    }
+
     @Override
     protected synchronized void evolve() { }
 
     @Override
-    protected synchronized void replicate() { }
+    protected synchronized void replicate() {
+        if (isAdult.get() && creatureCharacteristics.get("ENERGY") > 0 && canReplicate() && isActive()) {
+            Animal newAnimal = new Animal(this);
+
+            creatureCharacteristics.put("SIZE", PROPERTIES.get("SIZE"));
+            creatureCharacteristics.put("ENERGY", PROPERTIES.get("ENERGY"));
+        }
+    }
 
     @Override
     protected synchronized void feed() { }
+
+    /**
+     * Checks if the animal is in its active period.
+     *
+     * @return  True if the animal is in its active period, otherwise false.
+     */
+    private boolean isActive() {
+        
+        return true;
+    }
+
+    /**
+     * Checks if the animal can replicate.
+     *
+     * @return  True if the animal can replicate, otherwise false.
+     */
+    private boolean canReplicate() {
+        return position.get() != null && position.get().hasSpaceFor(this);
+    }
+
+    @Override
+    public List<String> getEvolutionCharacteristics() {
+        return EVOLUTION_CHARACTERISTICS;
+    }
 }

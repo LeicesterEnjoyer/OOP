@@ -6,13 +6,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import oop.evolution.creatures.Animal;
 import oop.evolution.creatures.Creature;
+import oop.evolution.creatures.Plant;
 
 /**
  * A class that represents a cell in a world grid that can hold water.
  * Each cell has a water level, and there is a maximum limit to how much water a cell can hold.
  */
 public class WorldCell {
+    private int x;
+
+    private int y;
+    
     /**
      * The current water level in the cell.
      */
@@ -41,7 +47,9 @@ public class WorldCell {
     /**
      * Constructor that initializes the water level with the value from the properties file.
      */
-    public WorldCell() {
+    public WorldCell(int x, int y) {
+        this.x = x;
+        this.y = y;
         this.waterLevel = new AtomicInteger(PROPERTIES.get("CELL_WATER"));
     }
 
@@ -52,13 +60,22 @@ public class WorldCell {
      * @return          True if the plant was added, false otherwise.
      */
     public synchronized boolean addPlant(Creature plant) {
-        if (plants.size() >= PROPERTIES.get("CELL_PLANTS"))
+        if (!hasSpaceFor(plant))
             return false;
         
         plants.add(plant);
         plant.setPosition(this);
 
         return true;
+    }
+
+    public synchronized boolean hasSpaceFor(Creature creature) {
+        if (creature instanceof Animal)    
+            return animals.size() < PROPERTIES.get("CELL_ANIMALS");
+        if (creature instanceof Plant)
+            return plants.size() < PROPERTIES.get("CELL_PLANTS");
+        
+        return false;
     }
 
     /**
@@ -68,13 +85,20 @@ public class WorldCell {
      * @return          True if the animal was added, false otherwise.
      */
     public synchronized boolean addAnimal(Creature animal) {
-        if (animals.size() >= PROPERTIES.get("CELL_ANIMALS"))
+        if (!hasSpaceFor(animal))
             return false;
 
         animals.add(animal);
         animal.setPosition(this);
         
         return true;
+    }
+
+    public void removeCreature(Creature creature) {
+        if (plants.contains(creature))
+            plants.remove(creature);
+        else if (animals.contains(creature))
+            animals.remove(creature);
     }
 
     /**
@@ -119,14 +143,46 @@ public class WorldCell {
      *
      * @param waterQuantity     The quantity of water to add.
      */
-    public void rain(int waterQuantity) {
-        int newWaterLevel = waterLevel.addAndGet(waterQuantity);
-        
-        if (newWaterLevel < 0)
-            newWaterLevel = 0;
+     public synchronized void rain(int waterQuantity) {
+        if (waterLevel.addAndGet(waterQuantity) > MAX_CELL_WATER_LEVEL) {
+            for (Creature animal : animals)
+                animal.killCreature();
+            for (Creature plant : plants) 
+                plant.killCreature();
 
-        if (newWaterLevel > MAX_CELL_WATER_LEVEL)
-            waterLevel.set(waterQuantity + 5);
+            waterLevel.set(waterQuantity);
+
+        } 
+        else 
+            waterLevel.addAndGet(waterQuantity);
+    }
+
+    public synchronized void eatPlant(Animal animal) {
+        if (plants.isEmpty()) 
+            return;
+
+        Creature plant = plants.get(0);
+        int attack = Animal.getProperty("ATTACK");
+        int defence = Plant.getProperty("DEFENCE");
+
+        if (attack > defence) {
+            plants.remove(plant);
+            animal.setCreatureCharacteristic("ENERGY", animal.getCreatureCharacteristic("ENERGY") + attack - defence);
+        }
+    }
+
+    public synchronized void eatAnimal(Animal animal) {
+        if (animals.isEmpty()) 
+            return;
+
+        Creature target = animals.get(0);
+        int attack = Animal.getProperty("ATTACK");
+        int defence = Animal.getProperty("DEFENCE");
+        
+        if (attack > defence) {
+            animals.remove(target);
+            animal.setCreatureCharacteristic("ENERGY", animal.getCreatureCharacteristic("ENERGY") + attack - defence);
+        }
     }
 
     /**
@@ -136,5 +192,13 @@ public class WorldCell {
      */
     public int getWaterLevel() {
         return waterLevel.get();
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 }

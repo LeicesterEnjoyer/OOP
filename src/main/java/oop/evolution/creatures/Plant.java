@@ -1,5 +1,6 @@
 package oop.evolution.creatures;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import oop.evolution.Customizable;
@@ -13,6 +14,17 @@ import oop.evolution.World;
 public final class Plant extends Creature {
     static {    
         PROPERTIES.putAll(Customizable.loadProperties("src/main/resources/creatures/plants.properties"));
+    }
+
+    /**
+     * The evolution characteristics for plants.
+     */
+    protected static final ArrayList<String> EVOLUTION_CHARACTERISTICS = new ArrayList<>();
+
+    static {
+        EVOLUTION_CHARACTERISTICS.add("GROW_WITH");
+        EVOLUTION_CHARACTERISTICS.add("ENERGY_INCREASE");
+        EVOLUTION_CHARACTERISTICS.add("DEFENCE");
     }
 
     /**
@@ -34,6 +46,16 @@ public final class Plant extends Creature {
      */
     public Plant(Plant parent) {
         super(parent);
+    }
+
+    /**
+     * Retrieves the value associated with the specified key in the PROPERTIES map.
+     *
+     * @param key   The key whose associated value is to be returned.
+     * @return      The value associated with the specified key.
+     */
+    public static Integer getProperty(String key) {
+        return PROPERTIES.get(key);
     }
 
     @Override
@@ -106,5 +128,10 @@ public final class Plant extends Creature {
      */
     private boolean isDay() {
         return World.getInstance().getTime().isDay();
+    }
+
+    @Override
+    public ArrayList<String> getEvolutionCharacteristics() {
+        return EVOLUTION_CHARACTERISTICS;
     }
 }

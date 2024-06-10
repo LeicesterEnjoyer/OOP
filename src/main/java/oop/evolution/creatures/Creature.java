@@ -1,10 +1,13 @@
 package oop.evolution.creatures;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import oop.evolution.World;
 import oop.evolution.WorldCell;
 
 /**
@@ -48,6 +51,26 @@ public abstract sealed class Creature permits Plant, Animal {
     protected Thread feedThread;
 
     /**
+     * Flag to indicate if growth process should stop.
+     */
+    private volatile boolean growStopRequested = false;
+
+    /**
+     * Flag to indicate if evolution process should stop.
+     */
+    private volatile boolean evolveStopRequested = false;
+
+    /**
+     * Flag to indicate if replication process should stop.
+     */
+    private volatile boolean replicateStopRequested = false;
+
+    /**
+     * Flag to indicate if feeding process should stop.
+     */
+    private volatile boolean feedStopRequested = false;
+
+    /**
      * The position of the creature in the world.
      */
     protected AtomicReference<WorldCell> position = new AtomicReference<>();
@@ -85,6 +108,17 @@ public abstract sealed class Creature permits Plant, Animal {
         this.position.set(newPosition);
     }
 
+    public WorldCell getPosition() {
+        return position.get();
+    }
+
+    /**
+     * Abstract method to get evolution characteristics specific to each creature type.
+     *
+     * @return A list of characteristics that can evolve for the creature.
+     */
+    protected abstract List<String> getEvolutionCharacteristics();
+
     /**
      * Abstract method representing the growth process of the creature.
      * Subclasses must implement this method to define creature growth behavior.
@@ -95,7 +129,14 @@ public abstract sealed class Creature permits Plant, Animal {
      * Abstract method representing the evolution process of the creature.
      * Subclasses must implement this method to define creature evolution behavior.
      */
-    protected abstract void evolve();
+    protected synchronized void evolve() {
+        if (!isAdult.get()) 
+            return;
+
+        Random random = new Random();
+        String characteristicToEvolve = getEvolutionCharacteristics().get(random.nextInt(getEvolutionCharacteristics().size()));
+        creatureCharacteristics.put(characteristicToEvolve, creatureCharacteristics.get(characteristicToEvolve) + 1);
+    }
 
     /**
      * Abstract method representing the replication process of the creature.
@@ -115,7 +156,7 @@ public abstract sealed class Creature permits Plant, Animal {
      */
     protected void startLiving() {
         growThread = new Thread(() -> {
-            while (true)
+            while (!growStopRequested)
                 try {
                     Thread.sleep(PROPERTIES.get("GROW_PERIOD"));
                     grow();
@@ -127,7 +168,7 @@ public abstract sealed class Creature permits Plant, Animal {
         growThread.start();
 
         evolveThread = new Thread(() -> {
-            while (true)
+            while (!evolveStopRequested)
                 try {
                     Thread.sleep(PROPERTIES.get("EVOLVE_PERIOD"));
                     evolve();
@@ -139,7 +180,7 @@ public abstract sealed class Creature permits Plant, Animal {
         evolveThread.start();
 
         replicateThread = new Thread(() -> {
-            while (true)
+            while (!replicateStopRequested)
                 try {
                     Thread.sleep(PROPERTIES.get("REPLICATE_PERIOD"));
                     replicate();
@@ -151,7 +192,7 @@ public abstract sealed class Creature permits Plant, Animal {
         replicateThread.start();
 
         feedThread = new Thread(() -> {
-            while (true)
+            while (!feedStopRequested)
                 try {
                     Thread.sleep(PROPERTIES.get("FEED_PERIOD"));
                     feed();
@@ -167,10 +208,21 @@ public abstract sealed class Creature permits Plant, Animal {
      * Stops the life processes of the creature by interrupting all threads associated with it.
      */
     public void killCreature() {
+        growStopRequested = true;
+        evolveStopRequested = true;
+        replicateStopRequested = true;
+        feedStopRequested = true;
+
         growThread.interrupt();
         evolveThread.interrupt();
         replicateThread.interrupt();
         feedThread.interrupt();
+
+        WorldCell currentPosition = position.get();
+        if (currentPosition != null)
+            currentPosition.removeCreature(this);
+
+        World.getInstance().removeCreature(this);
     }
 
     /**
@@ -181,4 +233,12 @@ public abstract sealed class Creature permits Plant, Animal {
     public AtomicBoolean getIsAdult() {
         return isAdult;
     }
+
+    public void setCreatureCharacteristic(String type, int newValue) {
+        creatureCharacteristics.put(type, newValue);
+    }
+
+    public int getCreatureCharacteristic(String type) {
+        return creatureCharacteristics.get(type);
+    }   
 }

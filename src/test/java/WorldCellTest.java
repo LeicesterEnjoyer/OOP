@@ -15,7 +15,7 @@ public class WorldCellTest {
      */
     @Test
     public void testInitialWaterLevel() {
-        evolution = new WorldCell();
+        evolution = new WorldCell(0, 0);
 
         assertEquals(5, evolution.getWaterLevel());
     }
@@ -26,7 +26,7 @@ public class WorldCellTest {
      */
     @Test
     public void testRainWithinLimit() {
-        evolution = new WorldCell();
+        evolution = new WorldCell(0, 0);
         evolution.rain(10);
 
         assertEquals(15, evolution.getWaterLevel());
@@ -38,7 +38,7 @@ public class WorldCellTest {
      */
     @Test
     public void testRainExceedingLimit() {
-        evolution = new WorldCell();
+        evolution = new WorldCell(0, 0);
         evolution.rain(25);
 
         assertEquals(30, evolution.getWaterLevel());
